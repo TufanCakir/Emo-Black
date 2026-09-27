@@ -1,0 +1,17 @@
+[
+    {
+        "id": "system",
+        "title": "System",
+        "color": "system"
+    },
+    {
+        "id": "light",
+        "title": "Light",
+        "color": "white"
+    },
+    {
+        "id": "dark",
+        "title": "Dark",
+        "color": "black"
+    }
+]

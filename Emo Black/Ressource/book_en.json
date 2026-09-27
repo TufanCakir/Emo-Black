@@ -1,0 +1,11 @@
+[
+    {
+        "id": "book_01",
+        "title": "The Dark Years",
+        "subTitle": "Chapter 1 – Black",
+        "description":
+            "Some people fear the dark. I don’t. For me, it was always the quietest part of the day. When the sun vanished, so did the expectations. No one asked where I was going. No one expected a smile. No one cared if my clothes were too dark, my hair too long, or my music too loud. The night wanted nothing from me. Maybe that’s why I liked it. My name is Kael. I’m twenty-two years old and live in a city whose name doesn’t really matter. It looks like any other city: gray buildings, crowded streets, people wearing headphones, pretending the others aren’t there. Every morning, I take the same route. Every evening, I come back. And in between, I try to figure out exactly when my life started to feel like a rerun. It was raining that evening. I stood at the bus stop, watching the raindrops run down the glass. The same song was playing in my headphones for the third time. Then I saw her. A girl was standing on the other side of the street. Black hair. Black coat. Black boots. Right out in the rain. No umbrella. She didn’t move. People walked past her, cars drove between us, but she just stood there, looking in my direction. At first, I thought she was looking at someone behind me. So I turned around. No one. When I looked back at her, she slowly raised her hand. She was holding something small between her fingers. A black book. There was only a single white word on the cover: **EMO** The bus pulled up in front of me. For a moment, it blocked my view. The doors opened. I didn’t get on. As the bus... ...drove on, the girl had vanished. On the other side of the street, only the black book remained. Lying in the middle of the rain. And although I didn't yet know what was inside, I already knew one thing: I should never have opened it.",
+        "image": "cover_the_dark_years",
+        "color": "white"
+    }
+]
