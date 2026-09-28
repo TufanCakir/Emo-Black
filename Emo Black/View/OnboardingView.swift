@@ -8,67 +8,110 @@
 import SwiftUI
 
 struct OnboardingView: View {
+
     @State private var viewModel = OnboardingViewModel()
+
     let onCompletion: () -> Void
 
+    private var primaryButtonTitle: LocalizedStringResource {
+        viewModel.isLastPage ? "Open Book" : "Continue"
+    }
+
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 0) {
+
+            // MARK: - Skip
+
             HStack {
                 Spacer()
-                Button("Überspringen") {
-                    onCompletion()
+
+                if !viewModel.isLastPage {
+                    Button("Skip") {
+                        onCompletion()
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(.secondary)
                 }
-                .buttonStyle(.plain)
             }
+            .frame(height: 44)
+            .padding(.horizontal)
+
+            // MARK: - Pages
 
             TabView(selection: $viewModel.selectedPage) {
                 ForEach(viewModel.pages) { page in
-                    VStack(spacing: 28) {
-                        Spacer()
-
-                        Group {
-                            switch page.artwork {
-                            case .asset(let name):
-                                Image(name)
-                                    .resizable()
-                                    .scaledToFit()
-                            case .symbol(let name):
-                                Image(systemName: name)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .symbolRenderingMode(.hierarchical)
-                                    .foregroundStyle(.tint)
-                            }
-                        }
-                        .frame(width: 150, height: 150)
-                        .accessibilityHidden(true)
-
-                        VStack(spacing: 12) {
-                            Text(page.title)
-                                .font(.largeTitle.bold())
-                                .multilineTextAlignment(.center)
-                            Text(page.message)
-                                .font(.body)
-                                .multilineTextAlignment(.center)
-                                .frame(maxWidth: 320)
-                        }
-
-                        Spacer()
-                    }
-                    .tag(page.id)
+                    OnboardingPageView(page: page)
+                        .tag(page.id)
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .always))
 
-            Button(viewModel.isLastPage ? "Book öffnen" : "Weiter") {
+            // MARK: - Continue
+
+            Button {
                 withAnimation(.snappy) {
-                    viewModel.continueAction(onCompletion: onCompletion)
+                    viewModel.continueAction(
+                        onCompletion: onCompletion
+                    )
                 }
+            } label: {
+                Text(primaryButtonTitle)
+                    .fontWeight(.semibold)
+                    .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
-            .frame(maxWidth: .infinity)
+            .padding(.horizontal)
+            .padding(.bottom)
         }
-        .padding()
+    }
+}
+
+// MARK: - Page
+
+private struct OnboardingPageView: View {
+
+    let page: OnboardingPage
+
+    var body: some View {
+        VStack(spacing: 28) {
+            Spacer()
+
+            artwork
+
+            VStack(spacing: 12) {
+                Text(page.title)
+                    .font(.largeTitle.bold())
+
+                Text(page.message)
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .lineSpacing(4)
+            }
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: 360)
+
+            Spacer()
+        }
+        .padding(.horizontal, 24)
+    }
+
+    @ViewBuilder
+    private var artwork: some View {
+        switch page.artwork {
+        case .asset(let name):
+            Image(name)
+                .resizable()
+                .scaledToFit()
+                .accessibilityHidden(true)
+
+        case .symbol(let name):
+            Image(systemName: name)
+                .resizable()
+                .scaledToFit()
+                .symbolRenderingMode(.hierarchical)
+                .foregroundStyle(.tint)
+                .accessibilityHidden(true)
+        }
     }
 }

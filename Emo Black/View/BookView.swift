@@ -12,17 +12,37 @@ struct BookView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 10) {
-                Text(book.title)
-                    .font(.title)
+            VStack(spacing: 32) {
 
-                Text(book.subTitle)
-                    .font(.title2)
+                VStack(spacing: 8) {
+                    Text(book.title)
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
+
+                    Text(book.subTitle)
+                        .font(.title2)
+                        .foregroundStyle(.secondary)
+                }
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
 
                 Text(book.description)
-                    .font(.system(size: 14))
+                    .font(.body)
+                    .lineSpacing(7)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: 650, alignment: .leading)
+                    .textSelection(.enabled)
             }
-            .multilineTextAlignment(.center)
+            .padding(.horizontal, 24)
+            .padding(.vertical, 32)
+            .frame(maxWidth: .infinity)
         }
+        .scrollIndicators(.hidden)
     }
+}
+
+#Preview {
+    let books: [Book] = Bundle.main.decode("book_de.json")
+
+    BookView(book: books[0])
 }

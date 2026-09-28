@@ -8,25 +8,94 @@
 import Foundation
 
 extension Bundle {
-    func decode<T: Decodable>(_ file: String) -> T {
-        // 1. Pfad zur Datei finden
-        guard let url = self.url(forResource: file, withExtension: nil) else {
-            fatalError("Die Datei \(file) wurde nicht im Bundle gefunden.")
-        }
 
-        // 2. Daten laden
-        guard let data = try? Data(contentsOf: url) else {
-            fatalError("Fehler beim Laden von \(file) aus dem Bundle.")
-        }
+    func decode<T: Decodable>(
+        _ file: String,
+        as type: T.Type = T.self
+    ) -> T {
 
-        // 3. Daten decodieren
-        let decoder = JSONDecoder()
-        do {
-            return try decoder.decode(T.self, from: data)
-        } catch {
+        guard
+            let url = url(
+                forResource: file,
+                withExtension: nil
+            )
+        else {
             fatalError(
-                "Fehler beim Parsen von \(file): \(error.localizedDescription)"
+                "❌ \(file) wurde nicht im Bundle gefunden."
             )
         }
+
+        let data: Data
+
+        do {
+            data = try Data(contentsOf: url)
+        } catch {
+            fatalError(
+                """
+                ❌ \(file) konnte nicht geladen werden.
+                \(error.localizedDescription)
+                """
+            )
+        }
+
+        let decoder = JSONDecoder()
+
+        do {
+            return try decoder.decode(type, from: data)
+        } catch let DecodingError.keyNotFound(key, context) {
+            fatalError(
+                """
+                ❌ Fehlender JSON-Key: \(key.stringValue)
+                Datei: \(file)
+                Pfad: \(context.codingPath.path)
+                """
+            )
+        } catch let DecodingError.typeMismatch(type, context) {
+            fatalError(
+                """
+                ❌ Falscher Datentyp für \(type)
+                Datei: \(file)
+                Pfad: \(context.codingPath.path)
+                """
+            )
+        } catch let DecodingError.valueNotFound(type, context) {
+            fatalError(
+                """
+                ❌ Fehlender Wert für \(type)
+                Datei: \(file)
+                Pfad: \(context.codingPath.path)
+                """
+            )
+        } catch let DecodingError.dataCorrupted(context) {
+            fatalError(
+                """
+                ❌ Ungültige JSON-Daten.
+                Datei: \(file)
+                Pfad: \(context.codingPath.path)
+                \(context.debugDescription)
+                """
+            )
+        } catch {
+            fatalError(
+                """
+                ❌ \(file) konnte nicht decodiert werden.
+                \(error)
+                """
+            )
+        }
+    }
+}
+
+// MARK: - Coding Path
+
+extension Array where Element == CodingKey {
+
+    fileprivate var path: String {
+        guard !isEmpty else {
+            return "Root"
+        }
+
+        return map(\.stringValue)
+            .joined(separator: " → ")
     }
 }

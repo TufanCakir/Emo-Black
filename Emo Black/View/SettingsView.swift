@@ -10,48 +10,46 @@ import SwiftUI
 struct SettingsView: View {
 
     @AppStorage("selectedLanguage")
-    private var selectedLanguage = "en"
+    private var selectedLanguage = "system"
 
     @AppStorage("selectedTheme")
     private var selectedTheme = "system"
 
     var body: some View {
-        VStack(spacing: 30) {
+        Form {
 
-            Text("Settings")
-                .font(.title)
+            // MARK: - Language
 
-            Text("Change App Language")
-                .font(.headline)
+            Section {
+                Picker("Language", selection: $selectedLanguage) {
+                    Text("English")
+                        .tag("en")
 
-            Picker("Language", selection: $selectedLanguage) {
-                Text("English")
-                    .tag("en")
-
-                Text("German")
-                    .tag("de")
+                    Text("German")
+                        .tag("de")
+                }
             }
-            .pickerStyle(.segmented)
 
-            Text("Appearance")
-                .font(.headline)
+            // MARK: - Appearance
 
-            Picker("Appearance", selection: $selectedTheme) {
-                Text("System")
-                    .tag("system")
+            Section {
+                Picker("Appearance", selection: $selectedTheme) {
+                    Text("System")
+                        .tag("system")
 
-                Text("Light")
-                    .tag("light")
+                    Text("Light")
+                        .tag("light")
 
-                Text("Dark")
-                    .tag("dark")
+                    Text("Dark")
+                        .tag("dark")
+                }
             }
-            .pickerStyle(.segmented)
         }
-        .padding()
     }
 }
 
 #Preview {
-    SettingsView()
+    NavigationStack {
+        SettingsView()
+    }
 }

@@ -2,16 +2,16 @@
     {
         "id": "system",
         "title": "System",
-        "color": "system"
+        "appearance": "system"
     },
     {
         "id": "light",
         "title": "Light",
-        "color": "white"
+        "appearance": "light"
     },
     {
         "id": "dark",
         "title": "Dark",
-        "color": "black"
+        "appearance": "dark"
     }
 ]

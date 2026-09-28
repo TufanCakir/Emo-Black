@@ -7,28 +7,36 @@
 
 import Foundation
 
-struct AppContent: Codable, Identifiable {
-    let id: Int
-    private let title_key: String
-    private let subTitle_key: String
-    private let description_key: String
+struct AppContent: Codable, Identifiable, Hashable {
+
+    let id: String
+
+    private let titleKey: String
+    private let subTitleKey: String
+    private let descriptionKey: String
 
     var title: String {
-        String(localized: String.LocalizationValue(title_key))
+        localized(titleKey)
     }
 
     var subTitle: String {
-        String(localized: String.LocalizationValue(subTitle_key))
+        localized(subTitleKey)
     }
 
     var description: String {
-        String(localized: String.LocalizationValue(description_key))
+        localized(descriptionKey)
     }
 
-    enum CodingKeys: String, CodingKey {
+    private func localized(_ key: String) -> String {
+        String(
+            localized: String.LocalizationValue(key)
+        )
+    }
+
+    private enum CodingKeys: String, CodingKey {
         case id
-        case title_key = "title_key"
-        case subTitle_key = "subTitle_key"
-        case description_key = "description_key"
+        case titleKey = "title_key"
+        case subTitleKey = "subtitle_key"
+        case descriptionKey = "description_key"
     }
 }

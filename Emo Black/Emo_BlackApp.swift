@@ -10,26 +10,34 @@ import SwiftUI
 @main
 struct Emo_BlackApp: App {
 
-    @AppStorage("selectedLanguage") private var selectedLanguage: String = "en"
-
-    @AppStorage("hasCompletedOnboarding")
-
-    private var hasCompletedOnboarding = false
+    @AppStorage("selectedLanguage")
+    private var selectedLanguage = "system"
 
     @AppStorage("selectedTheme")
-
     private var selectedTheme = "system"
 
-    private var colorScheme: ColorScheme? {
+    @AppStorage("hasCompletedOnboarding")
+    private var hasCompletedOnboarding = false
+
+    private var selectedLocale: Locale {
+        switch selectedLanguage {
+        case "de":
+            Locale(identifier: "de")
+        case "en":
+            Locale(identifier: "en")
+        default:
+            .autoupdatingCurrent
+        }
+    }
+
+    private var preferredColorScheme: ColorScheme? {
         switch selectedTheme {
         case "light":
-            return .light
-
+            .light
         case "dark":
-            return .dark
-
+            .dark
         default:
-            return nil
+            nil
         }
     }
 
@@ -37,18 +45,15 @@ struct Emo_BlackApp: App {
         WindowGroup {
             if hasCompletedOnboarding {
                 RootView()
-                    .transition(.opacity)
+                    .preferredColorScheme(preferredColorScheme)
+                    .environment(\.locale, selectedLocale)
             } else {
                 OnboardingView {
                     hasCompletedOnboarding = true
                 }
-                .transition(.opacity)
-                .preferredColorScheme(colorScheme)
+                .preferredColorScheme(preferredColorScheme)
+                .environment(\.locale, selectedLocale)
             }
         }
-        .environment(
-            \.locale,
-            Locale(identifier: selectedLanguage)
-        )
     }
 }

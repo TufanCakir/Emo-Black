@@ -1,5 +1,5 @@
 //
-//  App.swift
+//  AppTheme.swift
 //  Emo Black
 //
 //  Created by Tufan Cakir on 27.09.26.
@@ -7,30 +7,43 @@
 
 import SwiftUI
 
-struct AppTheme: Decodable, Identifiable, Hashable {
+struct AppTheme: Codable, Identifiable, Hashable {
+
     let id: String
     let title: String
-    let color: Color
+    let appearance: AppAppearance
+}
 
-    private enum CodingKeys: String, CodingKey {
-        case id, title, color
+// MARK: - Appearance
+
+enum AppAppearance: String, Codable, Hashable {
+    case system
+    case light
+    case dark
+
+    var colorScheme: ColorScheme? {
+        switch self {
+        case .system:
+            nil
+
+        case .light:
+            .light
+
+        case .dark:
+            .dark
+        }
     }
 
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+    var systemImage: String {
+        switch self {
+        case .system:
+            "circle.lefthalf.filled"
 
-        id = try container.decode(String.self, forKey: .id)
-        title = try container.decode(String.self, forKey: .title)
+        case .light:
+            "sun.max"
 
-        switch try container.decode(String.self, forKey: .color) {
-        case "system":
-            color = .primary
-        case "white":
-            color = .white
-        case "black":
-            color = .black
-        default:
-            color = .clear
+        case .dark:
+            "moon"
         }
     }
 }

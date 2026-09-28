@@ -13,23 +13,24 @@ enum OnboardingArtwork: Equatable {
 }
 
 struct OnboardingPage: Identifiable, Equatable {
-    let id: Int
-    let title: String
-    let message: String
+
+    let id: String
+    let title: LocalizedStringResource
+    let message: LocalizedStringResource
     let artwork: OnboardingArtwork
 
     static let pages: [OnboardingPage] = [
         OnboardingPage(
-            id: 0,
+            id: "welcome",
             title: "Emo Black",
-            message: "Willkommen bei Emo Black.",
+            message: "Welcome to Emo Black.",
             artwork: .asset("e_logo")
         ),
+
         OnboardingPage(
-            id: 1,
-            title: "Geschichten",
-            message:
-                "Endecke spannende Geschichten",
+            id: "stories",
+            title: "Stories",
+            message: "Discover exciting stories.",
             artwork: .symbol("book.fill")
         ),
     ]
