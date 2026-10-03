@@ -154,13 +154,7 @@ private struct OnboardingPageView: View {
                     width: 72,
                     height: 72
                 )
-                .tint(
-                    Color(
-                        red: 0.78,
-                        green: 0.42,
-                        blue: 1
-                    )
-                )
+                .tint(EmoColors.accent)
 
         }
         .accessibilityHidden(true)
