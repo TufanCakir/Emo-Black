@@ -23,6 +23,9 @@ struct ReadingProgressView: View {
 }
 
 #Preview {
-    ReadingProgressView(progress: 0.82)
-        .padding()
+    EmoScreen {
+        ReadingProgressView(progress: 0.82)
+            .padding()
+    }
+    .preferredColorScheme(.dark)
 }

@@ -110,6 +110,7 @@ struct SearchView: View {
                             }
                         }
                     }
+                    .listRowBackground(Color.clear)
                 }
             }
         }
@@ -123,6 +124,7 @@ struct SearchView: View {
             Section("News") {
                 ForEach(filteredNews) { item in
                     NewsItemView(news: item)
+                        .listRowBackground(Color.clear)
                 }
             }
         }
@@ -147,4 +149,11 @@ struct SearchView: View {
             text: query
         )
     }
+}
+
+#Preview {
+    EmoScreen {
+        SearchView(searchText: "", books: [], news: [])
+    }
+    .preferredColorScheme(.dark)
 }

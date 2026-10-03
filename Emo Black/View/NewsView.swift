@@ -30,6 +30,9 @@ struct NewsView: View {
     let news: [News] = Bundle.main.decode("news_de.json")
 
     NavigationStack {
-        NewsView(news: news)
+        EmoScreen {
+            NewsView(news: news)
+        }
+        .preferredColorScheme(.dark)
     }
 }

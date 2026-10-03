@@ -38,7 +38,10 @@ struct HomeView: View {
     let readingProgress = ReadingProgressStore()
 
     NavigationStack {
-        HomeView(books: books)
+        EmoScreen {
+            HomeView(books: books)
+        }
+        .environment(readingProgress)
+        .preferredColorScheme(.dark)
     }
-    .environment(readingProgress)
 }

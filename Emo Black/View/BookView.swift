@@ -10,10 +10,8 @@ import SwiftUI
 struct BookView: View {
 
     @Environment(ReadingProgressStore.self)
-    private var readingProgress
 
-    @Environment(\.isReadingBook)
-    private var isReadingBook
+    private var readingProgress
 
     let book: Book
 
@@ -48,39 +46,34 @@ struct BookView: View {
                 .frame(maxWidth: .infinity)
             }
             .scrollIndicators(.hidden)
-        }
-        .onAppear {
-            isReadingBook.wrappedValue = true
-        }
-        .onDisappear {
-            isReadingBook.wrappedValue = false
-        }
-        .onScrollGeometryChange(
-            for: Double.self
-        ) { geometry in
+            .onScrollGeometryChange(
+                for: Double.self
+            ) { geometry in
 
-            let scrollableHeight =
-                geometry.contentSize.height
-                - geometry.containerSize.height
+                let scrollableHeight =
+                    geometry.contentSize.height
+                    - geometry.containerSize.height
 
-            guard scrollableHeight > 0 else {
-                return 1
+                guard scrollableHeight > 0 else {
+                    return 1
+                }
+
+                return min(
+                    max(
+                        geometry.contentOffset.y / scrollableHeight,
+                        0
+                    ),
+                    1
+                )
+
+            } action: { _, progress in
+                readingProgress.setProgress(
+                    progress,
+                    for: book.id
+                )
             }
-
-            return min(
-                max(
-                    geometry.contentOffset.y / scrollableHeight,
-                    0
-                ),
-                1
-            )
-
-        } action: { _, progress in
-            readingProgress.setProgress(
-                progress,
-                for: book.id
-            )
         }
+        .toolbar(.hidden, for: .tabBar)
     }
 }
 
@@ -90,4 +83,5 @@ struct BookView: View {
 
     BookView(book: books[0])
         .environment(readingProgress)
+        .preferredColorScheme(.dark)
 }

@@ -12,6 +12,8 @@ struct SettingsView: View {
     @AppStorage("selectedLanguage")
     private var selectedLanguage = "system"
 
+    // MARK: - App Information
+
     private var appVersion: String {
         Bundle.main.object(
             forInfoDictionaryKey: "CFBundleShortVersionString"
@@ -24,53 +26,86 @@ struct SettingsView: View {
         ) as? String ?? "–"
     }
 
+    // MARK: - View
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                GlassCard(
-                    title: "Language"
-                ) {
-                    Picker(
-                        "Language",
-                        selection: $selectedLanguage
-                    ) {
-                        Text("System")
-                            .tag("system")
-
-                        Text("English")
-                            .tag("en")
-
-                        Text("German")
-                            .tag("de")
-                    }
-                    .pickerStyle(.menu)
-                }
-
-                GlassCard(
-                    title: "About"
-                ) {
-                    VStack(spacing: 16) {
-                        LabeledContent("Version") {
-                            Text(appVersion)
-                                .foregroundStyle(.secondary)
-                        }
-
-                        Divider()
-
-                        LabeledContent("Build") {
-                            Text(buildNumber)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                }
+                languageCard
+                aboutCard
             }
             .padding()
+        }
+        .scrollIndicators(.hidden)
+    }
+
+    // MARK: - Language
+
+    private var languageCard: some View {
+        GlassCard(title: "Language") {
+            LabeledContent {
+                Picker(
+                    "Language",
+                    selection: $selectedLanguage
+                ) {
+                    Text("System")
+                        .tag("system")
+
+                    Text("English")
+                        .tag("en")
+
+                    Text("German")
+                        .tag("de")
+                }
+                .labelsHidden()
+                .pickerStyle(.menu)
+            } label: {
+                Label(
+                    "Language",
+                    systemImage: "character.bubble"
+                )
+            }
+        }
+    }
+
+    // MARK: - About
+
+    private var aboutCard: some View {
+        GlassCard(title: "About") {
+            VStack(spacing: 16) {
+                LabeledContent {
+                    Text(appVersion)
+                        .foregroundStyle(.secondary)
+                } label: {
+                    Label(
+                        "Version",
+                        systemImage: "info.circle"
+                    )
+                }
+
+                Divider()
+
+                LabeledContent {
+                    Text(buildNumber)
+                        .foregroundStyle(.secondary)
+                } label: {
+                    Label(
+                        "Build",
+                        systemImage: "hammer"
+                    )
+                }
+            }
         }
     }
 }
 
 #Preview {
     NavigationStack {
-        SettingsView()
+        EmoScreen {
+            SettingsView()
+                .navigationTitle("Settings")
+                .navigationBarTitleDisplayMode(.inline)
+        }
     }
+    .preferredColorScheme(.dark)
 }

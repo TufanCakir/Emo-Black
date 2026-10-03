@@ -70,6 +70,13 @@ struct RootView: View {
                 }
             }
         }
+        .tint(
+            Color(
+                red: 0.78,
+                green: 0.42,
+                blue: 1.0
+            )
+        )
         .tabViewSearchActivation(.searchTabSelection)
         .task(id: locale.identifier) {
             loadContent()
@@ -88,4 +95,5 @@ struct RootView: View {
 
     RootView()
         .environment(readingProgress)
+        .preferredColorScheme(.dark)
 }

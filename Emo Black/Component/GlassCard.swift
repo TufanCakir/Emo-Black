@@ -14,10 +14,16 @@ struct GlassCard<Content: View>: View {
     @ViewBuilder
     let content: () -> Content
 
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+    private let cornerRadius: CGFloat = 24
 
-       
+    var body: some View {
+        VStack(
+            alignment: .leading,
+            spacing: 16
+        ) {
+            Text(title)
+                .font(.headline)
+                .fontWeight(.semibold)
 
             content()
         }
@@ -26,22 +32,27 @@ struct GlassCard<Content: View>: View {
             maxWidth: .infinity,
             alignment: .leading
         )
-        .background(.ultraThinMaterial)
-        .clipShape(
+        .background {
             RoundedRectangle(
-                cornerRadius: 24,
+                cornerRadius: cornerRadius,
                 style: .continuous
             )
-        )
+            .fill(.ultraThinMaterial)
+        }
         .overlay {
             RoundedRectangle(
-                cornerRadius: 24,
+                cornerRadius: cornerRadius,
                 style: .continuous
             )
             .stroke(
-                .white.opacity(0.15),
+                .white.opacity(0.12),
                 lineWidth: 1
             )
         }
+        .contentShape(
+            .rect(
+                cornerRadius: cornerRadius
+            )
+        )
     }
 }
