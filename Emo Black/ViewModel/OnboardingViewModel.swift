@@ -2,7 +2,7 @@
 //  OnboardingViewModel.swift
 //  Emo Black
 //
-//  Created by Tufan Cakir on 27.09.26.
+//  Created by Tufan Cakir on 22.09.26.
 //
 
 import Observation
@@ -15,18 +15,12 @@ final class OnboardingViewModel {
 
     let pages = OnboardingPage.pages
 
-    var selectedPage: String
-
-    // MARK: - Init
-
-    init() {
-        selectedPage = OnboardingPage.pages.first?.id ?? ""
-    }
+    var selectedIndex = 0
 
     // MARK: - State
 
     var isLastPage: Bool {
-        selectedPage == pages.last?.id
+        selectedIndex == pages.indices.last
     }
 
     // MARK: - Actions
@@ -37,20 +31,6 @@ final class OnboardingViewModel {
             return
         }
 
-        guard
-            let currentIndex = pages.firstIndex(
-                where: { $0.id == selectedPage }
-            )
-        else {
-            return
-        }
-
-        let nextIndex = pages.index(after: currentIndex)
-
-        guard pages.indices.contains(nextIndex) else {
-            return
-        }
-
-        selectedPage = pages[nextIndex].id
+        selectedIndex += 1
     }
 }

@@ -7,77 +7,85 @@
 
 import SwiftUI
 
-private enum RootTab: String, CaseIterable, Identifiable {
-    case home
-    case news
-    case settings
-
-    var id: Self { self }
-
-    var title: LocalizedStringKey {
-        switch self {
-        case .home:
-            "Home"
-
-        case .news:
-            "News"
-
-        case .settings:
-            "Settings"
-        }
-    }
-
-    var systemImage: String {
-        switch self {
-        case .home:
-            "house"
-
-        case .news:
-            "newspaper"
-
-        case .settings:
-            "gearshape"
-        }
-    }
-
-    @ViewBuilder
-    var content: some View {
-        switch self {
-        case .home:
-            HomeView()
-            
-        case .news:
-            NewsView()
-
-        case .settings:
-            SettingsView()
-        }
-    }
-}
-
 struct RootView: View {
 
-    @State private var selectedTab: RootTab = .home
-    @State private var isReadingBook = false
+    @Environment(\.locale)
+    private var locale
+
+    @State private var bookStore = BookStore()
+    @State private var newsStore = NewsStore()
+    @State private var searchText = ""
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            ForEach(RootTab.allCases) { tab in
+        TabView {
+            Tab("Home", systemImage: "house") {
                 NavigationStack {
-                    tab.content
-                        .navigationTitle(tab.title)
-                        .navigationBarTitleDisplayMode(.inline)
+                    EmoScreen {
+                        HomeView(
+                            books: bookStore.books
+                        )
+                    }
+                    .navigationTitle("Home")
+                    .navigationBarTitleDisplayMode(.inline)
                 }
-                .tag(tab)
+            }
+
+            Tab("News", systemImage: "newspaper") {
+                NavigationStack {
+                    EmoScreen {
+                        NewsView(
+                            news: newsStore.news
+                        )
+                    }
+                    .navigationTitle("News")
+                    .navigationBarTitleDisplayMode(.inline)
+                }
+            }
+
+            Tab("Settings", systemImage: "gear") {
+                NavigationStack {
+                    EmoScreen {
+                        SettingsView()
+                    }
+                    .navigationTitle("Settings")
+                    .navigationBarTitleDisplayMode(.inline)
+                }
+            }
+
+            Tab(role: .search) {
+                NavigationStack {
+                    EmoScreen {
+                        SearchView(
+                            searchText: searchText,
+                            books: bookStore.books,
+                            news: newsStore.news
+                        )
+                    }
+                    .navigationTitle("Search")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .searchable(
+                        text: $searchText,
+                        prompt: "Search"
+                    )
+                }
             }
         }
-        .tabViewStyle(.page)
-        .indexViewStyle(
-            .page(backgroundDisplayMode: isReadingBook ? .never : .always)
-        )
+        .tabViewSearchActivation(.searchTabSelection)
+        .task(id: locale.identifier) {
+            loadContent()
+        }
+    }
+
+    private func loadContent() {
+        bookStore.load(locale: locale)
+        newsStore.load(locale: locale)
     }
 }
 
 #Preview {
+
+    let readingProgress = ReadingProgressStore()
+
     RootView()
+        .environment(readingProgress)
 }

@@ -10,11 +10,10 @@ import SwiftUI
 @main
 struct Emo_BlackApp: App {
 
+    @State private var readingProgress = ReadingProgressStore()
+
     @AppStorage("selectedLanguage")
     private var selectedLanguage = "system"
-
-    @AppStorage("selectedTheme")
-    private var selectedTheme = "system"
 
     @AppStorage("hasCompletedOnboarding")
     private var hasCompletedOnboarding = false
@@ -23,37 +22,29 @@ struct Emo_BlackApp: App {
         switch selectedLanguage {
         case "de":
             Locale(identifier: "de")
+
         case "en":
             Locale(identifier: "en")
+
         default:
             .autoupdatingCurrent
         }
     }
 
-    private var preferredColorScheme: ColorScheme? {
-        switch selectedTheme {
-        case "light":
-            .light
-        case "dark":
-            .dark
-        default:
-            nil
-        }
-    }
-
     var body: some Scene {
         WindowGroup {
-            if hasCompletedOnboarding {
-                RootView()
-                    .preferredColorScheme(preferredColorScheme)
-                    .environment(\.locale, selectedLocale)
-            } else {
-                OnboardingView {
-                    hasCompletedOnboarding = true
+            Group {
+                if hasCompletedOnboarding {
+                    RootView()
+                } else {
+                    OnboardingView {
+                        hasCompletedOnboarding = true
+                    }
                 }
-                .preferredColorScheme(preferredColorScheme)
-                .environment(\.locale, selectedLocale)
             }
+            .environment(readingProgress)
+            .environment(\.locale, selectedLocale)
+            .preferredColorScheme(.dark)
         }
     }
 }

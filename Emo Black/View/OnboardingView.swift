@@ -38,10 +38,12 @@ struct OnboardingView: View {
 
             // MARK: - Pages
 
-            TabView(selection: $viewModel.selectedPage) {
-                ForEach(viewModel.pages) { page in
+            TabView(selection: $viewModel.selectedIndex) {
+                ForEach(Array(viewModel.pages.enumerated()), id: \.element.id) {
+                    index,
+                    page in
                     OnboardingPageView(page: page)
-                        .tag(page.id)
+                        .tag(index)
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .always))
@@ -103,6 +105,7 @@ private struct OnboardingPageView: View {
             Image(name)
                 .resizable()
                 .scaledToFit()
+                .frame(maxWidth: 180, maxHeight: 180)
                 .accessibilityHidden(true)
 
         case .symbol(let name):
@@ -111,6 +114,7 @@ private struct OnboardingPageView: View {
                 .scaledToFit()
                 .symbolRenderingMode(.hierarchical)
                 .foregroundStyle(.tint)
+                .frame(width: 100, height: 100)
                 .accessibilityHidden(true)
         }
     }

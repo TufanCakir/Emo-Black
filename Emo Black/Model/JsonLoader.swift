@@ -11,7 +11,8 @@ extension Bundle {
 
     func decode<T: Decodable>(
         _ file: String,
-        as type: T.Type = T.self
+        as type: T.Type = T.self,
+        decoder: JSONDecoder = JSONDecoder()
     ) -> T {
 
         guard
@@ -21,7 +22,11 @@ extension Bundle {
             )
         else {
             fatalError(
-                "❌ \(file) wurde nicht im Bundle gefunden."
+                """
+                ❌ JSON-Datei nicht gefunden.
+                Datei: \(file)
+                Bundle: \(bundleURL.lastPathComponent)
+                """
             )
         }
 
@@ -32,56 +37,79 @@ extension Bundle {
         } catch {
             fatalError(
                 """
-                ❌ \(file) konnte nicht geladen werden.
-                \(error.localizedDescription)
+                ❌ JSON-Datei konnte nicht gelesen werden.
+                Datei: \(file)
+                Fehler: \(error.localizedDescription)
                 """
             )
         }
 
-        let decoder = JSONDecoder()
-
         do {
             return try decoder.decode(type, from: data)
-        } catch let DecodingError.keyNotFound(key, context) {
+        } catch let error as DecodingError {
+            fatalError(
+                error.description(file: file)
+            )
+        } catch {
             fatalError(
                 """
-                ❌ Fehlender JSON-Key: \(key.stringValue)
+                ❌ JSON konnte nicht decodiert werden.
                 Datei: \(file)
-                Pfad: \(context.codingPath.path)
+                Fehler: \(error.localizedDescription)
                 """
             )
-        } catch let DecodingError.typeMismatch(type, context) {
-            fatalError(
-                """
-                ❌ Falscher Datentyp für \(type)
+        }
+    }
+}
+
+// MARK: - Decoding Error
+
+extension DecodingError {
+
+    fileprivate func description(file: String) -> String {
+        switch self {
+
+        case .keyNotFound(let key, let context):
+            return """
+                ❌ Fehlender JSON-Key.
                 Datei: \(file)
+                Key: \(key.stringValue)
                 Pfad: \(context.codingPath.path)
+                \(context.debugDescription)
                 """
-            )
-        } catch let DecodingError.valueNotFound(type, context) {
-            fatalError(
-                """
-                ❌ Fehlender Wert für \(type)
+
+        case .typeMismatch(let type, let context):
+            return """
+                ❌ Falscher Datentyp.
                 Datei: \(file)
+                Erwartet: \(type)
                 Pfad: \(context.codingPath.path)
+                \(context.debugDescription)
                 """
-            )
-        } catch let DecodingError.dataCorrupted(context) {
-            fatalError(
+
+        case .valueNotFound(let type, let context):
+            return """
+                ❌ Fehlender JSON-Wert.
+                Datei: \(file)
+                Erwartet: \(type)
+                Pfad: \(context.codingPath.path)
+                \(context.debugDescription)
                 """
+
+        case .dataCorrupted(let context):
+            return """
                 ❌ Ungültige JSON-Daten.
                 Datei: \(file)
                 Pfad: \(context.codingPath.path)
                 \(context.debugDescription)
                 """
-            )
-        } catch {
-            fatalError(
+
+        @unknown default:
+            return """
+                ❌ Unbekannter Decoding-Fehler.
+                Datei: \(file)
+                \(self)
                 """
-                ❌ \(file) konnte nicht decodiert werden.
-                \(error)
-                """
-            )
         }
     }
 }
@@ -95,7 +123,13 @@ extension Array where Element == CodingKey {
             return "Root"
         }
 
-        return map(\.stringValue)
-            .joined(separator: " → ")
+        return map { key in
+            if let index = key.intValue {
+                return "[\(index)]"
+            }
+
+            return key.stringValue
+        }
+        .joined(separator: " → ")
     }
 }

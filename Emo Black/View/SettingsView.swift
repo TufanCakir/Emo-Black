@@ -12,38 +12,59 @@ struct SettingsView: View {
     @AppStorage("selectedLanguage")
     private var selectedLanguage = "system"
 
-    @AppStorage("selectedTheme")
-    private var selectedTheme = "system"
+    private var appVersion: String {
+        Bundle.main.object(
+            forInfoDictionaryKey: "CFBundleShortVersionString"
+        ) as? String ?? "–"
+    }
+
+    private var buildNumber: String {
+        Bundle.main.object(
+            forInfoDictionaryKey: "CFBundleVersion"
+        ) as? String ?? "–"
+    }
 
     var body: some View {
-        Form {
+        ScrollView {
+            VStack(spacing: 20) {
+                GlassCard(
+                    title: "Language"
+                ) {
+                    Picker(
+                        "Language",
+                        selection: $selectedLanguage
+                    ) {
+                        Text("System")
+                            .tag("system")
 
-            // MARK: - Language
+                        Text("English")
+                            .tag("en")
 
-            Section {
-                Picker("Language", selection: $selectedLanguage) {
-                    Text("English")
-                        .tag("en")
+                        Text("German")
+                            .tag("de")
+                    }
+                    .pickerStyle(.menu)
+                }
 
-                    Text("German")
-                        .tag("de")
+                GlassCard(
+                    title: "About"
+                ) {
+                    VStack(spacing: 16) {
+                        LabeledContent("Version") {
+                            Text(appVersion)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Divider()
+
+                        LabeledContent("Build") {
+                            Text(buildNumber)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
                 }
             }
-
-            // MARK: - Appearance
-
-            Section {
-                Picker("Appearance", selection: $selectedTheme) {
-                    Text("System")
-                        .tag("system")
-
-                    Text("Light")
-                        .tag("light")
-
-                    Text("Dark")
-                        .tag("dark")
-                }
-            }
+            .padding()
         }
     }
 }
