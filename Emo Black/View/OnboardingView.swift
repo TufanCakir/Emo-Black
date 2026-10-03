@@ -14,57 +14,88 @@ struct OnboardingView: View {
     let onCompletion: () -> Void
 
     private var primaryButtonTitle: LocalizedStringResource {
-        viewModel.isLastPage ? "Open Book" : "Continue"
+        viewModel.isLastPage
+            ? "Open Book"
+            : "Continue"
     }
 
     var body: some View {
-        VStack(spacing: 0) {
+        EmoScreen {
+            VStack(spacing: 0) {
+                header
 
-            // MARK: - Skip
+                pages
 
-            HStack {
-                Spacer()
-
-                if !viewModel.isLastPage {
-                    Button("Skip") {
-                        onCompletion()
-                    }
-                    .buttonStyle(.plain)
-                    .foregroundStyle(.secondary)
-                }
+                footer
             }
-            .frame(height: 44)
-            .padding(.horizontal)
+        }
+    }
 
-            // MARK: - Pages
+    // MARK: - Header
 
-            TabView(selection: $viewModel.selectedIndex) {
-                ForEach(Array(viewModel.pages.enumerated()), id: \.element.id) {
-                    index,
-                    page in
-                    OnboardingPageView(page: page)
-                        .tag(index)
+    private var header: some View {
+        HStack {
+            Spacer()
+
+            if !viewModel.isLastPage {
+                Button("Skip") {
+                    onCompletion()
                 }
+                .foregroundStyle(.secondary)
+                .buttonStyle(.plain)
             }
-            .tabViewStyle(.page(indexDisplayMode: .always))
+        }
+        .padding(.horizontal)
+    }
 
-            // MARK: - Continue
+    // MARK: - Pages
 
-            Button {
-                withAnimation(.snappy) {
-                    viewModel.continueAction(
-                        onCompletion: onCompletion
-                    )
-                }
-            } label: {
-                Text(primaryButtonTitle)
-                    .fontWeight(.semibold)
-                    .frame(maxWidth: .infinity)
+    private var pages: some View {
+        TabView(
+            selection: $viewModel.selectedIndex
+        ) {
+            ForEach(
+                Array(viewModel.pages.enumerated()),
+                id: \.element.id
+            ) { index, page in
+                OnboardingPageView(page: page)
+                    .tag(index)
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-            .padding(.horizontal)
-            .padding(.bottom)
+        }
+        .tabViewStyle(
+            .page(indexDisplayMode: .always)
+        )
+    }
+
+    // MARK: - Footer
+
+    private var footer: some View {
+        Button {
+            continueAction()
+        } label: {
+            Text(primaryButtonTitle)
+                .fontWeight(.semibold)
+                .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.borderedProminent)
+        .controlSize(.large)
+        .padding(.horizontal)
+        .tint(
+            Color(
+                red: 0.78,
+                green: 0.42,
+                blue: 1
+            )
+        )
+    }
+
+    // MARK: - Actions
+
+    private func continueAction() {
+        withAnimation(.snappy) {
+            viewModel.continueAction(
+                onCompletion: onCompletion
+            )
         }
     }
 }
@@ -76,27 +107,27 @@ private struct OnboardingPageView: View {
     let page: OnboardingPage
 
     var body: some View {
-        VStack(spacing: 28) {
+        VStack(spacing: 12) {
             Spacer()
 
             artwork
 
             VStack(spacing: 12) {
                 Text(page.title)
-                    .font(.largeTitle.bold())
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
 
                 Text(page.message)
                     .font(.body)
                     .foregroundStyle(.secondary)
-                    .lineSpacing(4)
             }
             .multilineTextAlignment(.center)
-            .frame(maxWidth: 360)
 
             Spacer()
         }
-        .padding(.horizontal, 24)
     }
+
+    // MARK: - Artwork
 
     @ViewBuilder
     private var artwork: some View {
@@ -105,17 +136,44 @@ private struct OnboardingPageView: View {
             Image(name)
                 .resizable()
                 .scaledToFit()
-                .frame(maxWidth: 180, maxHeight: 180)
+                .frame(
+                    maxWidth: 180,
+                    maxHeight: 180
+                )
                 .accessibilityHidden(true)
 
         case .symbol(let name):
+            symbolArtwork(name)
+        }
+    }
+
+    private func symbolArtwork(
+        _ name: String
+    ) -> some View {
+        VStack {
             Image(systemName: name)
                 .resizable()
                 .scaledToFit()
                 .symbolRenderingMode(.hierarchical)
                 .foregroundStyle(.tint)
-                .frame(width: 100, height: 100)
-                .accessibilityHidden(true)
+                .frame(
+                    width: 72,
+                    height: 72
+                )
+                .tint(
+                    Color(
+                        red: 0.78,
+                        green: 0.42,
+                        blue: 1
+                    )
+                )
+
         }
+        .accessibilityHidden(true)
     }
+}
+
+#Preview {
+    OnboardingView(onCompletion: {})
+        .preferredColorScheme(.dark)
 }

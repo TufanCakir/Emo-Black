@@ -25,7 +25,7 @@ struct OnboardingPage: Identifiable, Equatable {
             title: "Emo Black",
             message:
                 "Welcome to a world of dark, mysterious and unforgettable stories.",
-            artwork: .asset("e_logo")
+            artwork: .asset("emo_black_logo")
         ),
 
         OnboardingPage(
