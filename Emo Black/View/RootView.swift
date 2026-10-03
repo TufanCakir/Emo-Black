@@ -10,6 +10,7 @@ import SwiftUI
 struct RootView: View {
 
     @Environment(\.locale)
+
     private var locale
 
     @State private var bookStore = BookStore()
@@ -70,13 +71,7 @@ struct RootView: View {
                 }
             }
         }
-        .tint(
-            Color(
-                red: 0.78,
-                green: 0.42,
-                blue: 1.0
-            )
-        )
+        .tint(EmoColors.accent)
         .tabViewSearchActivation(.searchTabSelection)
         .task(id: locale.identifier) {
             loadContent()
@@ -90,7 +85,6 @@ struct RootView: View {
 }
 
 #Preview {
-
     let readingProgress = ReadingProgressStore()
 
     RootView()

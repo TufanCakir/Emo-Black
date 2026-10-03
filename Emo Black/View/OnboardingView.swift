@@ -80,13 +80,7 @@ struct OnboardingView: View {
         .buttonStyle(.borderedProminent)
         .controlSize(.large)
         .padding(.horizontal)
-        .tint(
-            Color(
-                red: 0.78,
-                green: 0.42,
-                blue: 1
-            )
-        )
+        .tint(EmoColors.accent)
     }
 
     // MARK: - Actions
